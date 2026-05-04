@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const { imageBase64 } = await req.json();
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'user',
@@ -28,11 +28,15 @@ export async function POST(req: NextRequest) {
     });
 
     const content = response.choices[0].message.content || '[]';
-    const ingredients = JSON.parse(content);
+    const clean = content.replace(/```json|```/g, '').trim();
+    const ingredients = JSON.parse(clean);
 
     return NextResponse.json({ ingredients });
-  } catch (error) {
-    console.error('Recognition error:', error);
-    return NextResponse.json({ error: 'Failed to recognize ingredients' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Recognition error:', error?.message);
+    return NextResponse.json(
+      { error: error?.message || 'Failed to recognize ingredients' },
+      { status: 500 }
+    );
   }
 }
