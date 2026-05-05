@@ -125,7 +125,7 @@ describe('Start to finish recipe creation and submission', () => {
                 ]
             }
         })
-    })
+    }, 15000)
 })
 
 

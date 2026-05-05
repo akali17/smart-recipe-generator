@@ -506,11 +506,6 @@ exports[`The step component shall render the review inputs section 1`] = `
           >
             Here's a recap of your choices. Use the switch on each recipe generated to select the recipes you want to submit.
           </p>
-          <p
-            class="text-sm text-red-500 mt-2"
-          >
-            Please select at least 3 ingredients to proceed with recipe creation.
-          </p>
         </div>
         <div
           class="mb-6"

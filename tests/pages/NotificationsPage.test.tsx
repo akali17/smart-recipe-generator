@@ -41,7 +41,7 @@ describe('The home component', () => {
         fireEvent.click(markAsRead)
         await screen.findByText('Notifications')
         // The list text should NOT be bold if read
-        expect(notification.className.includes('text-gray-800 font-bold')).toBeFalsy()
+        expect(notification.className.includes('font-bold')).toBeFalsy()
         expect(notification.className.includes('text-gray-500')).toBeTruthy()
     })
 })

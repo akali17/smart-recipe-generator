@@ -43,13 +43,17 @@ function Navigation({
   const router = useRouter();
   const { oldIngredients } = router.query;
 
-  useEffect(() => {
-    if (oldIngredients && Array.isArray(oldIngredients)) {
-      setIngredients(
-        oldIngredients.map((i) => ({ name: i, quantity: null, id: uuidv4() }))
-      );
-    }
-  }, [oldIngredients]);
+useEffect(() => {
+  // Xử lý cả string lẫn array (1 ingredient vs nhiều)
+  if (oldIngredients) {
+    const list = Array.isArray(oldIngredients) ? oldIngredients : [oldIngredients];
+    setIngredients(
+      list.map((i) => ({ name: i, quantity: null, id: uuidv4() }))
+    );
+    // Mở Step 1 để user thấy ingredients đã điền
+    setStep(0);
+  }
+}, [oldIngredients]);
 
 
   const handleIngredientSubmit = async () => {

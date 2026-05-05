@@ -62,11 +62,6 @@ const ReviewComponent = ({
               ? ingredients.length >= 3 ? 'Make sure everything looks right before we start cooking!' : ''
               : "Here's a recap of your choices. Use the switch on each recipe generated to select the recipes you want to submit."}
           </p>
-          {ingredients.length < 3 && (
-            <p className="text-sm text-red-500 mt-2">
-              Please select at least 3 ingredients to proceed with recipe creation.
-            </p>
-          )}
         </div>
 
         {/* Ingredients Section */}
@@ -144,11 +139,8 @@ const ReviewComponent = ({
                 px-2 py-2 sm:px-4 sm:py-2
                 rounded-full transition duration-300 ease-in-out transform
                 hover:bg-brand-700 hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brand-500
-                ${ingredients.length < 3 || generatedRecipes.length
-                ? 'cursor-not-allowed opacity-50'
-                : ''
-              }`}
-              disabled={ingredients.length < 3 || Boolean(generatedRecipes.length)}
+                ${generatedRecipes.length ? 'cursor-not-allowed opacity-50' : ''}`}
+              disabled={Boolean(generatedRecipes.length)}
               aria-label="Create recipes based on your selections"
             >
               <span className="text-sm sm:text-base">Create Recipes</span>
