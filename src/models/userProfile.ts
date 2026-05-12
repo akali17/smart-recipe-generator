@@ -2,10 +2,13 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUserProfile extends Document {
   userId: string;
-  spiceLevel: 'mild' | 'medium' | 'hot';
+  spiceLevel: string;
   dislikedIngredients: string[];
+  allergies: string[];
   dietaryNotes: string;
   likedRecipeIds: string[];
+  preferredCuisines: string[];
+  servingSize: number;
   cookedHistory: {
     ingredients: string[];
     recipeName: string;
