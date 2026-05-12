@@ -7,12 +7,14 @@ import Notifications from './Notifications';
 
 const userNavigation = [
     { name: 'Your Profile', route: '/Profile' },
+    { name: 'Khẩu vị của tôi', route: '/Profile-Settings' },
     { name: 'Sign out', route: '/auth/signout' },
 ]
 
 const navigation = [
     { name: 'Home', route: '/Home', style: 'text-gray-300 hover:bg-brand-700 hover:text-white' },
     { name: 'Create Recipes', route: '/CreateRecipe', style: 'bg-brand-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-brand-600 transition-all animate-pulse' },
+    { name: '📷 Food Recognition', route: '/recognize', style: 'text-gray-300 hover:bg-brand-700 hover:text-white' },
     { name: 'About', route: '/', style: 'text-gray-300 hover:bg-brand-700 hover:text-white' },
 ]
 

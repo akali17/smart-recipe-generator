@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
+      max_tokens: 200,
       messages: [
         {
           role: 'user',

@@ -50,7 +50,27 @@ type ResponseType = {
 // Generate recipes by sending a chat completion request to OpenAI using ingredients and dietary preferences
 export const generateRecipe = async (ingredients: Ingredient[], dietaryPreferences: DietaryPreference[], userId: string): Promise<ResponseType> => {
     try {
-        const prompt = getRecipeGenerationPrompt(ingredients, dietaryPreferences);
+        // Fetch user profile để personalize
+        let userProfile = null;
+        try {
+            await connectDB();
+            const UserProfile = (await import('../models/userProfile')).default;
+            userProfile = await UserProfile.findOne({ userId });
+        } catch (e) {
+            console.warn('Could not fetch user profile:', e);
+        }
+
+        const prompt = getRecipeGenerationPrompt(ingredients, dietaryPreferences, userProfile ? {
+                spiceLevel: userProfile.spiceLevel,
+                dislikedIngredients: userProfile.dislikedIngredients,
+                allergies: userProfile.allergies,
+                dietaryNotes: userProfile.dietaryNotes,
+                preferredCuisines: userProfile.preferredCuisines,
+                servingSize: userProfile.servingSize,
+                recentlyCooked: userProfile.cookedHistory
+                ?.slice(-5)
+        .map((h: any) => h.recipeName) || [],
+} : undefined);
         const model = OPENAI_TEXT_MODEL;
         const response = await openai.chat.completions.create({
             model,

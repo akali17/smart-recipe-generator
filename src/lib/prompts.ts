@@ -1,7 +1,26 @@
 import { Ingredient, DietaryPreference, Recipe, ExtendedRecipe } from '../types/index'
 
-export const getRecipeGenerationPrompt = (ingredients: Ingredient[], dietaryPreferences: DietaryPreference[]) => `
-I have the following ingredients: ${JSON.stringify(ingredients)} ${dietaryPreferences.length ? `and dietary preferences: ${dietaryPreferences.join(',')}` : ''}. Please provide me with three different delicious and diverse recipes. The response should be in the following JSON format without any additional text, markdown, or code formatting (e.g., no backticks):
+export const getRecipeGenerationPrompt = (
+  ingredients: Ingredient[],
+  dietaryPreferences: DietaryPreference[],
+  userProfile?: {
+    spiceLevel?: string | number;
+    dislikedIngredients?: string[];
+    allergies?: string[];
+    dietaryNotes?: string;
+    recentlyCooked?: string[];
+    preferredCuisines?: string[];
+    servingSize?: number;
+  }
+) => `
+I have the following ingredients: ${JSON.stringify(ingredients)} ${dietaryPreferences.length ? `and dietary preferences: ${dietaryPreferences.join(',')}` : ''}.
+${userProfile ? `
+Personal preferences (MUST follow strictly):
+- Spice level: ${userProfile.spiceLevel || 'medium'} (mild = no spice, medium = moderate, hot = very spicy)
+- Disliked ingredients to AVOID completely: ${userProfile.dislikedIngredients?.length ? userProfile.dislikedIngredients.join(', ') : 'none'}
+- Additional dietary notes: ${userProfile.dietaryNotes || 'none'}
+${userProfile.recentlyCooked?.length ? `- Recently cooked (avoid repeating these): ${userProfile.recentlyCooked.join(', ')}` : ''}
+` : ''} Please provide me with three different delicious and diverse recipes. The response should be in the following JSON format without any additional text, markdown, or code formatting (e.g., no backticks):
 [
     {
         "name": "Recipe Name",

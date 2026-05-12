@@ -120,11 +120,28 @@ export default function RecipeDisplayModal({ isOpen, close, recipe, removeRecipe
                                     </div>
                                 }
                                 {
-                                    isLoading ?
-                                        <Loading />
-                                        :
-                                        <RecipeCard recipe={recipe} selectedRecipes={[]} removeMargin isModalView />
-                                }
+                                                                            isLoading ?
+                                            <Loading />
+                                            :
+                                            <>
+                                            {/* Nút tìm video hướng dẫn YouTube */}
+                                            <div className="w-full px-3 pb-2">
+                                                <a
+                                                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(recipe.name + ' recipe how to cook')}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all"
+                                                >
+                                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8z"/>
+                                                        <path d="M9.7 15.5V8.5l6.3 3.5-6.3 3.5z" fill="white"/>
+                                                    </svg>
+                                                    Xem video hướng dẫn nấu {recipe.name}
+                                                </a>
+                                            </div>
+                                            <RecipeCard recipe={recipe} selectedRecipes={[]} removeMargin isModalView />
+                                            </>
+                                            }
                             </div>
                         </DialogPanel>
                     </div>

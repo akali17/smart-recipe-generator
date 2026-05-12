@@ -56,13 +56,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse, session: any) 
         console.info('Uploading OpenAI images to S3...');
         const uploadResults = await uploadImagesToS3(openaiImagesArray);
 
-        // Update recipe data with image links and owner information
-        const updatedRecipes = recipes.map((r: Recipe) => ({
-            ...r,
-            owner: new mongoose.Types.ObjectId(session.user.id),
-            imgLink: getS3Link(uploadResults, r.openaiPromptId),
-            openaiPromptId: r.openaiPromptId.split('-')[0] // Remove client key iteration
-        }));
+                const updatedRecipes = recipes.map((r: Recipe, idx: number) => {
+            const s3Link = getS3Link(uploadResults, r.openaiPromptId);
+            // Nếu S3 upload thất bại, dùng ảnh base64 từ DALL·E trực tiếp
+            const imgLink = s3Link === '/logo.svg' 
+                ? (imageResults[idx]?.imgLink || '/logo.svg')
+                : s3Link;
+            return {
+                ...r,
+                owner: new mongoose.Types.ObjectId(session.user.id),
+                imgLink,
+                openaiPromptId: r.openaiPromptId.split('-')[0]
+            };
+        });
 
         // Connect to MongoDB and save recipes
         await connectDB();
@@ -74,6 +80,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse, session: any) 
             generateRecipeTags(r as ExtendedRecipe, session.user.id)
                 .catch((error) => console.error(`Failed to generate tags for recipe ${r.name}:`, error));
         });
+
+      // Lưu lịch sử nấu ăn vào UserProfile
+        try {
+            const UserProfile = (await import('../../models/userProfile')).default;
+            const historyEntries = recipes.map((r: Recipe) => ({
+                recipeName: r.name,
+                ingredients: r.ingredients.map((i: any) => i.name),
+                date: new Date(),
+            }));
+            await UserProfile.findOneAndUpdate(
+                { userId: session.user.id },
+                {
+                    $push: {
+                        cookedHistory: {
+                            $each: historyEntries,
+                            $slice: -20 // Chỉ giữ 20 món gần nhất
+                        }
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (e) {
+            console.warn('Could not save cooked history:', e);
+        }
 
         // Respond with success message
         res.status(200).json({ status: 'Saved Recipes and generated the Images!' });

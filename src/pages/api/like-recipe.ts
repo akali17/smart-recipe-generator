@@ -66,6 +66,27 @@ const toggleLike = async (req: NextApiRequest, res: NextApiResponse, session: an
 
 
 
+       // Lưu vào UserProfile để personalize
+        try {
+            const UserProfile = (await import('../../models/userProfile')).default;
+            if (!liked) {
+                // User vừa like → thêm vào danh sách yêu thích
+                await UserProfile.findOneAndUpdate(
+                    { userId: session.user.id },
+                    { $addToSet: { likedRecipeIds: recipeId } },
+                    { upsert: true }
+                );
+            } else {
+                // User bỏ like → xóa khỏi danh sách
+                await UserProfile.findOneAndUpdate(
+                    { userId: session.user.id },
+                    { $pull: { likedRecipeIds: recipeId } }
+                );
+            }
+        } catch (e) {
+            console.warn('Could not update user profile likes:', e);
+        }
+
         // Filter and update the recipe data
         const [filteredAndUpdatedRecipe] = filterResults([updatedRecipe], session.user.id);
         res.status(200).json(filteredAndUpdatedRecipe);
